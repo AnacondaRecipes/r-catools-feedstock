@@ -14,29 +14,45 @@ source:
     - https://cran.r-project.org/src/contrib/Archive/caTools/caTools_{{ version }}.tar.gz
   sha256: d32a73febf00930355cc00f3e4e71357412e0f163faae6a4bf7f552cacfe9af4
 
+
+  # patches:
+   # List any patch files here
+   # - fix.patch
+
 build:
+  # If this is a new build for the same version, increment the build number.
   number: 0
-  skip: true  # [win32]
+
+  # This is required to make R link correctly on Linux.
   rpaths:
     - lib/R/lib/
     - lib/
 
+# Suggests: MASS, rpart
 requirements:
   build:
     - r-base
+    - {{ compiler('c') }}        # [not win]
+    - {{ compiler('cxx') }}      # [not win]
+    - {{native}}toolchain        # [win]
     - r-bitops
-    - posix                # [win]
-    - {{native}}toolchain  # [win]
-    - gcc                  # [not win]
 
   run:
     - r-base
+    - {{native}}gcc-libs         # [win]
     - r-bitops
 
 test:
   commands:
-    - $R -e "library('caTools')"  # [not win]
+    # You can put additional test commands to be run here.
+    - $R -e "library('caTools')"           # [not win]
     - "\"%R%\" -e \"library('caTools')\""  # [win]
+
+  # You can also put a file called run_test.py, run_test.sh, or run_test.bat
+  # in the recipe that will be run at test time.
+
+  # requires:
+    # Put any additional test requirements here.
 
 about:
   home: https://CRAN.R-project.org/package=caTools
@@ -52,3 +68,27 @@ extra:
   recipe-maintainers:
     - johanneskoester
     - bgruening
+    - mingwandroid
+
+# The original CRAN metadata for this package was:
+
+# Package: caTools
+# Type: Package
+# Title: Tools: moving window statistics, GIF, Base64, ROC AUC, etc.
+# Version: 1.17.1
+# Date: 2014-04-21
+# Author: Jarek Tuszynski <jaroslaw.w.tuszynski@saic.com>
+# Maintainer: Harutyun Khachatryan <kh_harut@yahoo.com>
+# Depends: R (>= 2.2.0)
+# Imports: bitops
+# Suggests: MASS, rpart
+# Description: Contains several basic utility functions including: moving (rolling, running) window statistic functions, read/write for GIF and ENVI binary files, fast calculation of AUC, LogitBoost classifier, base64 encoder/decoder, round-off-error-free sum and cumsum, etc.
+# License: GPL-3
+# Packaged: 2014-09-09 21:05:06 UTC; ripley
+# NeedsCompilation: yes
+# Repository: CRAN
+# Date/Publication: 2014-09-10 16:22:53
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml
